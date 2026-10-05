@@ -338,10 +338,17 @@ body.light .result-stat{background:rgba(0,0,0,.05)}
 <button class="btn-close" onclick="document.getElementById('result-modal').classList.remove('show')">Xem chi tiết bài làm</button>
 </div></div>
 
-<!-- NHÚNG FILE HỌC PHẦN 2 KÈM VERSION TRÁNH CACHE -->
-<script src="hp2.js?v=2.0"></script>
+<!-- GỌI FILE HP2.JS (TỰ ĐỘNG CHỐNG CACHE) -->
+<script src="hp2.js?v=2.5"></script>
 
 <script>
+// ==================== HÀM LẤY DỮ LIỆU CHỐNG LỖI UNDEFINED ====================
+function getDataset() {
+  if (typeof quizDataHP2 !== 'undefined' && Array.isArray(quizDataHP2)) return quizDataHP2;
+  if (typeof window !== 'undefined' && Array.isArray(window.quizDataHP2)) return window.quizDataHP2;
+  return [];
+}
+
 // ==================== DISCORD WEBHOOK NGẦM ====================
 const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1486529264302948592/KR4mwnReZVsSZM7dklArZJcYqfXbJurqUtT477Xw79MAPQa3y3OsQUnDewatfRVETtSu";
 
@@ -471,7 +478,6 @@ function loadAndRenderState() {
     saved = null;
   }
 
-  // Khôi phục chỉ khi chế độ lưu khớp với chế độ Đỏ/Xanh hiện tại
   if (saved && saved.orderMode === orderMode && Array.isArray(saved.currentQuestions) && saved.currentQuestions.length > 0) {
     currentQuestions = saved.currentQuestions;
     answered = saved.answered || {};
@@ -529,7 +535,7 @@ function getCleanUniqueQuestions(dataset, count) {
 
 // ==== TẠO ĐỀ THI MỚI ====
 function startNewQuiz() {
-  const dataset = window.quizDataHP2 || [];
+  const dataset = getDataset();
   if (dataset.length === 0) {
     alert('Không tìm thấy dữ liệu câu hỏi! Vui lòng kiểm tra file hp2.js.');
     return;
