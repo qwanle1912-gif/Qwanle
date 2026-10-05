@@ -1,4 +1,4 @@
-const quizDataHP2 = [
+var quizDataHP2 = [
   {
     q: "Lực lượng nào tiến hành bạo loạn lật đổ?",
     o: [
