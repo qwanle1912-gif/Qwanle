@@ -120,6 +120,7 @@ body.light .order-switch-wrap{background:rgba(240,248,255,.95);border-color:rgba
   transform:translateX(22px);
 }
 
+/* NÚT NỘP BÀI NỔI Ở GÓC PHẢI */
 .btn-floating-submit{
   position:fixed;right:18px;bottom:96px;z-index:90;
   background:linear-gradient(135deg,#10b981,#0284c7);
@@ -134,6 +135,23 @@ body.light .order-switch-wrap{background:rgba(240,248,255,.95);border-color:rgba
 @keyframes floatPulse{
   0%,100%{transform:translateY(0);box-shadow:0 6px 20px rgba(16,185,129,.5)}
   50%{transform:translateY(-4px);box-shadow:0 10px 30px rgba(16,185,129,.85)}
+}
+
+/* NÚT LÀM LẠI CÂU SAI NỔI Ở GÓC PHẢI */
+.btn-floating-retry{
+  position:fixed;right:18px;bottom:96px;z-index:90;
+  background:linear-gradient(135deg,#f59e0b,#ef4444);
+  color:#fff;padding:12px 20px;font-size:13.5px;font-weight:900;
+  border-radius:50px;border:1.5px solid rgba(255,255,255,.45);
+  box-shadow:0 8px 25px rgba(239,68,68,.6);
+  cursor:pointer;display:none;align-items:center;gap:6px;
+  animation:floatPulseRed 2s infinite ease-in-out;
+}
+.btn-floating-retry:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(239,68,68,.85)}
+.btn-floating-retry:active{transform:scale(0.95)}
+@keyframes floatPulseRed{
+  0%,100%{transform:translateY(0);box-shadow:0 6px 20px rgba(239,68,68,.5)}
+  50%{transform:translateY(-4px);box-shadow:0 10px 30px rgba(239,68,68,.85)}
 }
 
 .stats-line{font-size:11px;opacity:.75;text-align:center;margin:0 0 12px;letter-spacing:.3px;padding:4px 8px;background:rgba(60,60,110,.35);border-radius:8px}
@@ -227,7 +245,11 @@ body.light .result-stat{background:rgba(0,0,0,.05)}
 <svg class="cat cat-4" width="44" height="44" viewBox="0 0 9 9" shape-rendering="crispEdges"><rect x="1" y="0" width="1" height="1" fill="#60a5fa"/><rect x="7" y="0" width="1" height="1" fill="#60a5fa"/><rect x="0" y="1" width="9" height="1" fill="#60a5fa"/><rect x="0" y="2" width="1" height="1" fill="#60a5fa"/><rect x="1" y="2" width="1" height="1" fill="#111"/><rect x="2" y="2" width="5" height="1" fill="#60a5fa"/><rect x="7" y="2" width="1" height="1" fill="#111"/><rect x="8" y="2" width="1" height="1" fill="#60a5fa"/><rect x="0" y="3" width="9" height="1" fill="#60a5fa"/><rect x="3" y="3" width="3" height="1" fill="#f472b6"/><rect x="0" y="4" width="9" height="1" fill="#60a5fa"/><rect x="0" y="5" width="9" height="1" fill="#60a5fa"/><rect x="0" y="6" width="9" height="1" fill="#60a5fa"/><rect x="1" y="7" width="1" height="1" fill="#60a5fa"/><rect x="7" y="7" width="1" height="1" fill="#60a5fa"/><rect x="1" y="8" width="1" height="1" fill="#111"/><rect x="7" y="8" width="1" height="1" fill="#111"/></svg>
 </div>
 
+<!-- NÚT NỘP BÀI NỔI Ở GÓC PHẢI (CHẾ ĐỘ THI CỬ) -->
 <button class="btn-floating-submit" id="btn-floating-submit" onclick="submitExam()">🚀 Nộp bài</button>
+
+<!-- NÚT LÀM LẠI CÂU SAI NỔI Ở GÓC PHẢI (KHI CÓ CÂU SAI) -->
+<button class="btn-floating-retry" id="btn-floating-retry" onclick="retryWrongQuestions()">🔁 Làm lại câu sai (<span id="floating-wrong-count">0</span>)</button>
 
 <div id="login-screen">
   <div class="login-box">
@@ -339,13 +361,30 @@ body.light .result-stat{background:rgba(0,0,0,.05)}
 </div></div>
 
 <!-- GỌI FILE HP2.JS (TỰ ĐỘNG CHỐNG CACHE) -->
-<script src="hp2.js?v=2.5"></script>
+<script src="hp2.js?v=3.0"></script>
 
 <script>
-// ==================== HÀM LẤY DỮ LIỆU CHỐNG LỖI UNDEFINED ====================
+// ==================== HÀM LẤY DỮ LIỆU TỰ ĐỘNG KHỚP CÂU HỎI & ĐÁP ÁN ABCD ====================
 function getDataset() {
-  if (typeof quizDataHP2 !== 'undefined' && Array.isArray(quizDataHP2)) return quizDataHP2;
-  if (typeof window !== 'undefined' && Array.isArray(window.quizDataHP2)) return window.quizDataHP2;
+  if (typeof quizDataHP2 !== 'undefined' && Array.isArray(quizDataHP2) && quizDataHP2.length > 0) return quizDataHP2;
+  if (typeof window !== 'undefined' && Array.isArray(window.quizDataHP2) && window.quizDataHP2.length > 0) return window.quizDataHP2;
+  
+  // Tự động ghép nối nếu trong hp2.js lưu dạng tách riêng hp2Questions & hp2Answers
+  const qList = (typeof hp2Questions !== 'undefined') ? hp2Questions : (window.hp2Questions || []);
+  const aList = (typeof hp2Answers !== 'undefined') ? hp2Answers : (window.hp2Answers || []);
+  if (qList.length > 0 && aList.length > 0) {
+    const letterMap = { "A": 0, "B": 1, "C": 2, "D": 3 };
+    return qList.map((item, idx) => {
+      const letter = (aList[idx] || "A").trim().toUpperCase();
+      const optIdx = letterMap[letter] !== undefined ? letterMap[letter] : 0;
+      return {
+        q: item.q,
+        o: item.o,
+        a: item.o[optIdx],
+        correctLetter: letter
+      };
+    });
+  }
   return [];
 }
 
@@ -529,7 +568,8 @@ function getCleanUniqueQuestions(dataset, count) {
   return shuffleArray(selected).map(q => ({
     q: q.q,
     o: shuffleArray([...q.o]),
-    a: q.a
+    a: q.a,
+    rawQ: q
   }));
 }
 
@@ -548,7 +588,8 @@ function startNewQuiz() {
     currentQuestions = dataset.slice(0, count).map(q => ({
       q: q.q,
       o: [...q.o],
-      a: q.a
+      a: q.a,
+      rawQ: q
     }));
   } else {
     // 🟢 XÁO TRỘN: Đảo câu hỏi và đảo đáp án chống trùng
@@ -769,13 +810,14 @@ function renderQuiz() {
   const c = document.getElementById('quiz-container');
   c.innerHTML = '';
 
-  const floatingBtn = document.getElementById('btn-floating-submit');
-  if (floatingBtn) {
-    floatingBtn.style.display = (quizMode === 'exam' && !isSubmitted) ? 'inline-flex' : 'none';
+  const floatingSubmitBtn = document.getElementById('btn-floating-submit');
+  if (floatingSubmitBtn) {
+    floatingSubmitBtn.style.display = (quizMode === 'exam' && !isSubmitted) ? 'inline-flex' : 'none';
   }
 
   updateHeader();
   updateWrongList();
+  updateFloatingRetryBtn();
 
   currentQuestions.forEach((q, i) => {
     const block = document.createElement('div');
@@ -842,11 +884,12 @@ function handleOptionClick(qIndex, selected, correct, clickedLabel, q) {
     } else {
       clickedLabel.classList.add('incorrect');
       q.o.forEach((opt, oi) => { if (opt === correct) document.getElementById('q-' + qIndex + '-opt-' + oi).classList.add('correct'); });
-      wrongList.push({ q: q.q, sel: selected, cor: correct });
+      wrongList.push({ q: q.q, o: q.o, sel: selected, cor: correct, rawQ: q });
       currentStreak = 0;
     }
     updateHeader();
     updateWrongList();
+    updateFloatingRetryBtn();
     saveCurrentState();
   } else {
     if (isSubmitted) return;
@@ -902,8 +945,10 @@ function submitExam() {
       streakCount = 0;
       wrongList.push({
         q: q.q,
+        o: q.o,
         sel: selected || '(Chưa chọn)',
-        cor: q.a
+        cor: q.a,
+        rawQ: q
       });
     }
   });
@@ -939,10 +984,54 @@ function submitExam() {
   recordCurrentSession(finalScore);
   saveCurrentState();
 
-  const floatingBtn = document.getElementById('btn-floating-submit');
-  if (floatingBtn) floatingBtn.style.display = 'none';
+  const floatingSubmitBtn = document.getElementById('btn-floating-submit');
+  if (floatingSubmitBtn) floatingSubmitBtn.style.display = 'none';
 
+  updateFloatingRetryBtn();
   document.getElementById('result-modal').classList.add('show');
+}
+
+// ==================== CẬP NHẬT NÚT LÀM LẠI CÂU SAI NỔI ====================
+function updateFloatingRetryBtn() {
+  const retryBtn = document.getElementById('btn-floating-retry');
+  const countSpan = document.getElementById('floating-wrong-count');
+  if (!retryBtn) return;
+
+  if (wrongList.length > 0 && (quizMode === 'practice' || (quizMode === 'exam' && isSubmitted))) {
+    if (countSpan) countSpan.innerText = wrongList.length;
+    retryBtn.style.display = 'inline-flex';
+  } else {
+    retryBtn.style.display = 'none';
+  }
+}
+
+// ==================== LÀM LẠI CÂU SAI ====================
+function retryWrongQuestions() {
+  if (wrongList.length === 0) return;
+  if (!confirm(`Bạn có muốn bắt đầu làm lại ${wrongList.length} câu đã trả lời sai không?`)) return;
+
+  // Đóng modal kết quả nếu đang mở
+  document.getElementById('result-modal').classList.remove('show');
+
+  // Tạo bộ câu hỏi mới từ danh sách câu làm sai
+  currentQuestions = wrongList.map(item => ({
+    q: item.q,
+    o: orderMode === 'fixed' ? [...item.o] : shuffleArray([...item.o]),
+    a: item.cor,
+    rawQ: item.rawQ || item
+  }));
+
+  answered = {};
+  userSelected = {};
+  wrongList = [];
+  correctCount = 0;
+  currentStreak = 0;
+  roundBestStreak = 0;
+  isSubmitted = false;
+
+  saveCurrentState();
+  renderQuiz();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function updateHeader() {
