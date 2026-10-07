@@ -264,7 +264,7 @@ body.light .result-stat{background:rgba(0,0,0,.05)}
 
 <div id="main-app">
 <div class="container">
-<h1>🌌 Ôn tập GDQP & An ninh</h1>
+<h1> Ôn tập GDQP & An ninh HP2</h1>
 <p class="subtitle">Phát triển bởi Lê Anh Quân<br>103 Đại Đội 2</p>
 
 <!-- CHÚ THÍCH NHỎ NẰM GÓC TRÁI DƯỚI TÊN -->
@@ -481,7 +481,7 @@ setInterval(checkForUpdates, 60000);
 let orderMode = 'fixed';
 let currentQuestions = [], answered = {}, userSelected = {}, wrongList = [], correctCount = 0;
 let currentStreak = 0, roundBestStreak = 0;
-let currentUser = '', questionCount = 50, theme = 'dark', quizMode = 'practice';
+let currentUser = '', questionCount = 150, theme = 'dark', quizMode = 'practice';
 let isSubmitted = false;
 
 function getStorageKey() {
@@ -1076,7 +1076,8 @@ function shuffleQuiz() {
 }
 
 function resetQuiz() {
-  if (confirm('Làm lại bài thi từ đầu? Lượt hiện tại sẽ được lưu vào lịch sử ôn tập.')) {
+  if (confirm('Làm lại bài thi từ đầu? Lượt hiện tại sẽ được lưu vào lịch sử 
+.')) {
     recordCurrentSession();
     startNewQuiz();
   }
