@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Ôn tập GDQP & An ninh HP2</title>
+<title>Ôn tập GDQP &  HP2</title>
 
 <!-- CHỐNG LƯU CACHE TRÌNH DUYỆT -->
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -270,14 +270,13 @@ body.light .result-stat{background:rgba(0,0,0,.05)}
 <!-- CHÚ THÍCH NHỎ NẰM GÓC TRÁI DƯỚI TÊN -->
 <div class="legend-note">
   🔴 <b>Đỏ (Đề gốc):</b> Giữ nguyên thứ tự câu hỏi & đáp án gốc của đề.<br>
-  🟢 <b>Xanh (Trộn):</b> Xáo trộn thứ tự câu hỏi & đáp án ngẫu nhiên.<br>
-😿😸🙀 Đã chỉnh lại toàn bộ đáp án theo đề photo nhe
+  🟢 <b>Xanh (Trộn):</b> Xáo trộn thứ tự câu hỏi & đáp án ngẫu nhiên.
 </div>
 
 <div class="header-actions">
   <button class="btn-settings" onclick="openSettings()">⚙️ Cài đặt</button>
   <div class="btn-correct">
-    ✅ <span class="badge" id="correct-badge">0/50</span>
+    ✅ <span class="badge" id="correct-badge">0/150</span>
   </div>
   <button class="btn-wrong" onclick="scrollToWrong()">
     ❌ <span class="badge" id="wrong-badge">0</span>
@@ -324,8 +323,8 @@ body.light .result-stat{background:rgba(0,0,0,.05)}
 </div>
 
 <div class="setting-row">
-<label>Số câu hỏi <span class="slider-val" id="count-val">50</span></label>
-<input id="count-slider" type="range" min="5" max="150" step="5" value="50" oninput="document.getElementById('count-val').innerText=this.value" onchange="applyCount()">
+<label>Số câu hỏi <span class="slider-val" id="count-val">150</span></label>
+<input id="count-slider" type="range" min="5" max="150" step="5" value="150" oninput="document.getElementById('count-val').innerText=this.value" onchange="applyCount()">
 </div>
 
 <div class="setting-row">
@@ -362,7 +361,7 @@ body.light .result-stat{background:rgba(0,0,0,.05)}
 </div></div>
 
 <!-- GỌI FILE HP2.JS (TỰ ĐỘNG CHỐNG CACHE) -->
-<script src="hp2.js?v=3.0"></script>
+<script src="hp2.js?v=3.1"></script>
 
 <script>
 // ==================== HÀM LẤY DỮ LIỆU TỰ ĐỘNG KHỚP CÂU HỎI & ĐÁP ÁN ABCD ====================
@@ -1076,8 +1075,7 @@ function shuffleQuiz() {
 }
 
 function resetQuiz() {
-  if (confirm('Làm lại bài thi từ đầu? Lượt hiện tại sẽ được lưu vào lịch sử 
-.')) {
+  if (confirm('Làm lại bài thi từ đầu? Lượt hiện tại sẽ được lưu vào lịch sử ôn tập.')) {
     recordCurrentSession();
     startNewQuiz();
   }
